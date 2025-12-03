@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0 (2025-12-03)
+
+### Features
+
+* initial release ([665c0fa](https://github.com/artifactsystems/terraform-huawei-iam/commit/665c0fab0c22e0df29ead7302c3eb94acb542ea2))
+
 ## 1.0.0 (Unreleased)
 
 ### Features
