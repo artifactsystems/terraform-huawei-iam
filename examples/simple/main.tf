@@ -4,7 +4,7 @@ provider "huaweicloud" {
 
 locals {
   name   = "ex-${basename(path.cwd)}"
-  region = "tr-west-1"
+  region = "tr-west-"
 }
 
 ################################################################################
@@ -24,9 +24,9 @@ module "iam" {
 
   users = [
     {
-      name        = "${local.name}-user1"
+      name        = "${local.name}-user"
       description = "Developer user"
-      email       = "user1@example.com"
+      email       = "user@example.com"
       enabled     = true
       access_type = "programmatic"
     }
@@ -42,7 +42,7 @@ module "iam" {
   group_memberships = [
     {
       group_name = "${local.name}-developers"
-      user_names = ["${local.name}-user1"]
+      user_names = ["${local.name}-user"]
     }
   ]
 
