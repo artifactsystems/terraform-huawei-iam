@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.0](https://github.com/artifactsystems/terraform-huawei-iam/compare/v1.0.0...v1.1.0) (2025-12-16)
+
+### Features
+
+* add IAM agency resource ([002a9e4](https://github.com/artifactsystems/terraform-huawei-iam/commit/002a9e43bca1dbf592a96bae5104028ce6f0dd66))
+
 ## 1.0.0 (2025-12-03)
 
 ### Features
