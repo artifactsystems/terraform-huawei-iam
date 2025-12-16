@@ -65,3 +65,35 @@ resource "huaweicloud_identity_group_role_assignment" "this" {
     huaweicloud_identity_group.this
   ]
 }
+
+################################################################################
+# IAM Agencies
+################################################################################
+
+resource "huaweicloud_identity_agency" "this" {
+  for_each = { for agency in var.agencies : agency.name => agency }
+
+  name                  = each.value.name
+  description           = try(each.value.description, null)
+  delegated_domain_name = each.value.delegated_domain_name
+  duration              = try(each.value.duration, "FOREVER")
+
+  dynamic "project_role" {
+    for_each = try(each.value.project_roles, [])
+    content {
+      project = project_role.value.project
+      roles   = project_role.value.roles
+    }
+  }
+
+  domain_roles        = try(each.value.domain_roles, [])
+  all_resources_roles = try(each.value.all_resources_roles, [])
+
+  dynamic "enterprise_project_roles" {
+    for_each = try(each.value.enterprise_project_roles, [])
+    content {
+      enterprise_project = enterprise_project_roles.value.enterprise_project
+      roles              = enterprise_project_roles.value.roles
+    }
+  }
+}

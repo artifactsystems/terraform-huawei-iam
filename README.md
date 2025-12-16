@@ -1,6 +1,6 @@
 # HuaweiCloud IAM Terraform Module
 
-Terraform module which creates IAM (Identity and Access Management) users, groups, group memberships, and role assignments on HuaweiCloud.
+Terraform module which creates IAM (Identity and Access Management) users, groups, group memberships, role assignments, and agencies on HuaweiCloud.
 
 ## Features
 
@@ -11,6 +11,7 @@ This module supports the following IAM features:
 - ✅ **Group Memberships**: Assign users to groups
 - ✅ **User Role Assignments**: Assign roles to users within enterprise projects
 - ✅ **Group Role Assignments**: Assign roles to groups at domain, project, or enterprise project level
+- ✅ **IAM Agencies**: Create and manage cross-service agencies for delegated access
 - ✅ **User Access Types**: Support for programmatic, console, or both access types
 - ✅ **Login Protection**: Support for SMS, email, or MFA login protection
 - ✅ **External Identity**: Support for external identity providers (SSO)
@@ -140,6 +141,27 @@ module "iam" {
 }
 ```
 
+### Agency Example for Cross-Service Access
+
+```hcl
+module "iam" {
+  source = "github.com/artifactsystems/terraform-huawei-iam?ref=v1.0.0"
+
+  agencies = [
+    {
+      name                  = "css-log-agency"
+      description           = "Agency for CSS to access OBS for log storage"
+      delegated_domain_name = "op_svc_css"
+
+      # Grant OBS access permissions
+      all_resources_roles = [
+        "OBS OperateAccess"
+      ]
+    }
+  ]
+}
+```
+
 ## Requirements
 
 | Name | Version |
@@ -162,6 +184,7 @@ module "iam" {
 | [huaweicloud_identity_group_membership](https://registry.terraform.io/providers/huaweicloud/huaweicloud/latest/docs/resources/identity_group_membership) | resource |
 | [huaweicloud_identity_user_role_assignment](https://registry.terraform.io/providers/huaweicloud/huaweicloud/latest/docs/resources/identity_user_role_assignment) | resource |
 | [huaweicloud_identity_group_role_assignment](https://registry.terraform.io/providers/huaweicloud/huaweicloud/latest/docs/resources/identity_group_role_assignment) | resource |
+| [huaweicloud_identity_agency](https://registry.terraform.io/providers/huaweicloud/huaweicloud/latest/docs/resources/identity_agency) | resource |
 
 ## Inputs
 
@@ -172,6 +195,7 @@ module "iam" {
 | group_memberships | List of group memberships to create | `list(object)` | `[]` | no |
 | user_role_assignments | List of enterprise-project role assignments for users | `list(object)` | `[]` | no |
 | group_role_assignments | List of role assignments for groups | `list(object)` | `[]` | no |
+| agencies | List of IAM agencies to create | `list(object)` | `[]` | no |
 
 ### users Object
 
@@ -216,6 +240,21 @@ module "iam" {
 
 **Note:** Exactly one of `domain_id`, `project_id`, or `enterprise_project_id` must be specified.
 
+### agencies Object
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| name | Agency name (1-64 characters) | `string` | n/a | yes |
+| description | Agency description (0-255 characters, excluding '@#$%^&*<>\') | `string` | `null` | no |
+| delegated_domain_name | Name of delegated user domain (e.g., "op_svc_css" for CSS) | `string` | n/a | yes |
+| duration | Validity period: "FOREVER", "ONEDAY", or specific days | `string` | `"FOREVER"` | no |
+| project_roles | List of roles and projects for project-level permissions | `list(object)` | `[]` | no |
+| domain_roles | List of role names for domain-level permissions | `list(string)` | `[]` | no |
+| all_resources_roles | List of role names for permissions on all resources | `list(string)` | `[]` | no |
+| enterprise_project_roles | List of roles and enterprise projects | `list(object)` | `[]` | no |
+
+**Note:** At least one of `project_roles`, `domain_roles`, `all_resources_roles` or `enterprise_project_roles` must be specified.
+
 ## Outputs
 
 | Name | Description |
@@ -230,6 +269,9 @@ module "iam" {
 | group_membership_ids | Map of group membership IDs, keyed by group name |
 | group_role_assignments | Map of group role assignment details |
 | group_role_assignment_ids | Map of group role assignment IDs |
+| agency_ids | Map of agency IDs, keyed by agency name |
+| agencies | Map of agency details, keyed by agency name |
+| agency_names | List of agency names |
 
 ## Notes
 

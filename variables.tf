@@ -88,3 +88,45 @@ variable "group_role_assignments" {
   }))
   default = []
 }
+
+################################################################################
+# IAM Agencies
+################################################################################
+
+variable "agencies" {
+  description = <<-EOF
+    List of IAM agencies to create. Each agency can have the following attributes:
+    - name (required): Agency name (1-64 characters)
+    - description (optional): Agency description (0-255 characters, excluding '@#$%^&*<>\')
+    - delegated_domain_name (required): Name of delegated user domain (for cross-account) or service domain (for cloud service delegation)
+      Examples: Account domain name, or service domains like "op_svc_css", "op_svc_dws", etc.
+    - duration (optional): Validity period - "FOREVER", "ONEDAY" or specific days (e.g., "20") (default: "FOREVER")
+    - project_roles (optional): List of roles and projects for project-level permissions
+      - project (required): Project name
+      - roles (required): List of role names
+    - domain_roles (optional): List of role names for domain-level permissions
+    - all_resources_roles (optional): List of role names for permissions on all resources (including enterprise projects)
+    - enterprise_project_roles (optional): List of roles and enterprise projects for enterprise project permissions
+      - enterprise_project (required): Enterprise project name
+      - roles (required): List of role names
+
+    Note: At least one of project_roles, domain_roles, all_resources_roles or enterprise_project_roles must be specified.
+  EOF
+  type = list(object({
+    name                  = string
+    description           = optional(string)
+    delegated_domain_name = string
+    duration              = optional(string, "FOREVER")
+    project_roles = optional(list(object({
+      project = string
+      roles   = list(string)
+    })), [])
+    domain_roles        = optional(list(string), [])
+    all_resources_roles = optional(list(string), [])
+    enterprise_project_roles = optional(list(object({
+      enterprise_project = string
+      roles              = list(string)
+    })), [])
+  }))
+  default = []
+}

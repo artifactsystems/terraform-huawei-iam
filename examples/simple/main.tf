@@ -4,7 +4,7 @@ provider "huaweicloud" {
 
 locals {
   name   = "ex-${basename(path.cwd)}"
-  region = "tr-west-"
+  region = "tr-west-1"
 }
 
 ################################################################################

@@ -115,3 +115,34 @@ output "group_role_assignment_ids" {
     for key, assignment in huaweicloud_identity_group_role_assignment.this : key => assignment.id
   }
 }
+
+################################################################################
+# IAM Agencies
+################################################################################
+
+output "agency_ids" {
+  description = "Map of agency IDs, keyed by agency name"
+  value = {
+    for name, agency in huaweicloud_identity_agency.this : name => agency.id
+  }
+}
+
+output "agencies" {
+  description = "Map of agency details, keyed by agency name"
+  value = {
+    for name, agency in huaweicloud_identity_agency.this : name => {
+      id                    = agency.id
+      name                  = agency.name
+      description           = agency.description
+      delegated_domain_name = agency.delegated_domain_name
+      duration              = agency.duration
+      expire_time           = agency.expire_time
+      create_time           = agency.create_time
+    }
+  }
+}
+
+output "agency_names" {
+  description = "List of agency names"
+  value       = [for name, agency in huaweicloud_identity_agency.this : name]
+}
