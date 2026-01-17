@@ -7,10 +7,28 @@ data "huaweicloud_identity_role" "managed" {
   display_name = each.value
 }
 
+################################################################################
+# Custom Policies
+################################################################################
+
+resource "huaweicloud_identity_role" "custom" {
+  for_each = { for policy in var.custom_policies : policy.name => policy }
+
+  name        = each.value.name
+  description = each.value.description
+  type        = each.value.type
+  policy      = each.value.policy
+}
+
 locals {
   managed_role_id_map = {
     for name, role in data.huaweicloud_identity_role.managed : name => role.id
   }
+
+  custom_policy_id_map = {
+    for name, policy in huaweicloud_identity_role.custom : name => policy.id
+  }
+  all_role_id_map = merge(local.managed_role_id_map, local.custom_policy_id_map)
 }
 
 ################################################################################
@@ -72,7 +90,8 @@ resource "huaweicloud_identity_group_role_assignment" "this" {
 
   group_id = huaweicloud_identity_group.this[each.value.group_name].id
 
-  role_id = lookup(local.managed_role_id_map, each.value.role_id, each.value.role_id)
+  # Resolve role_id: check managed roles, custom policies, or use as-is
+  role_id = lookup(local.all_role_id_map, each.value.role_id, each.value.role_id)
 
   domain_id             = try(each.value.domain_id, null)
   project_id            = try(each.value.project_id, null)
@@ -80,7 +99,8 @@ resource "huaweicloud_identity_group_role_assignment" "this" {
 
   depends_on = [
     huaweicloud_identity_group.this,
-    data.huaweicloud_identity_role.managed
+    data.huaweicloud_identity_role.managed,
+    huaweicloud_identity_role.custom
   ]
 }
 

@@ -15,6 +15,46 @@ variable "managed_role_names" {
 }
 
 ################################################################################
+# Custom Policies
+################################################################################
+
+variable "custom_policies" {
+  description = <<-EOF
+    List of custom IAM policies to create. Each policy can have the following attributes:
+    - name (required): Policy name (1-64 characters)
+    - description (required): Policy description
+    - type (required): Display mode - "AX" (global service project) or "XA" (region-specific projects)
+    - policy (required): Policy document in JSON format. Use jsonencode() for complex policies.
+
+    Example:
+    custom_policies = [
+      {
+        name        = "custom-obs-readonly"
+        description = "Custom OBS read-only policy"
+        type        = "AX"
+        policy      = jsonencode({
+          Version = "1.1"
+          Statement = [
+            {
+              Effect   = "Allow"
+              Action   = ["obs:bucket:GetBucketAcl"]
+              Resource = ["obs:*:*:bucket:*"]
+            }
+          ]
+        })
+      }
+    ]
+  EOF
+  type = list(object({
+    name        = string
+    description = string
+    type        = string
+    policy      = string
+  }))
+  default = []
+}
+
+################################################################################
 # IAM Users
 ################################################################################
 

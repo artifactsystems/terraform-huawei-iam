@@ -23,6 +23,30 @@ output "managed_roles" {
 }
 
 ################################################################################
+# Custom Policies
+################################################################################
+
+output "custom_policy_ids" {
+  description = "Map of custom policy IDs, keyed by policy name"
+  value = {
+    for name, policy in huaweicloud_identity_role.custom : name => policy.id
+  }
+}
+
+output "custom_policies" {
+  description = "Map of custom policy details, keyed by policy name"
+  value = {
+    for name, policy in huaweicloud_identity_role.custom : name => {
+      id          = policy.id
+      name        = policy.name
+      description = policy.description
+      type        = policy.type
+      references  = policy.references
+    }
+  }
+}
+
+################################################################################
 # IAM Users
 ################################################################################
 
