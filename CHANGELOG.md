@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0](https://github.com/artifactsystems/terraform-huawei-iam/compare/v1.1.0...v1.2.0) (2026-01-17)
+
+### Features
+
+* **managed-roles:** add automatic role ID lookup by display name ([4ecfe66](https://github.com/artifactsystems/terraform-huawei-iam/commit/4ecfe664505bf7822fb1110a72d1528e06fa77c0))
+
 ## [1.1.0](https://github.com/artifactsystems/terraform-huawei-iam/compare/v1.0.0...v1.1.0) (2025-12-16)
 
 ### Features
