@@ -1,4 +1,19 @@
 ################################################################################
+# Managed Roles (Data Source)
+################################################################################
+
+data "huaweicloud_identity_role" "managed" {
+  for_each     = toset(var.managed_role_names)
+  display_name = each.value
+}
+
+locals {
+  managed_role_id_map = {
+    for name, role in data.huaweicloud_identity_role.managed : name => role.id
+  }
+}
+
+################################################################################
 # IAM Users
 ################################################################################
 
@@ -55,14 +70,17 @@ resource "huaweicloud_identity_group_role_assignment" "this" {
     for assignment in var.group_role_assignments : "${assignment.group_name}/${assignment.role_id}/${coalesce(assignment.domain_id, assignment.project_id, assignment.enterprise_project_id, "unknown")}" => assignment
   }
 
-  group_id              = huaweicloud_identity_group.this[each.value.group_name].id
-  role_id               = each.value.role_id
+  group_id = huaweicloud_identity_group.this[each.value.group_name].id
+
+  role_id = lookup(local.managed_role_id_map, each.value.role_id, each.value.role_id)
+
   domain_id             = try(each.value.domain_id, null)
   project_id            = try(each.value.project_id, null)
   enterprise_project_id = try(each.value.enterprise_project_id, null)
 
   depends_on = [
-    huaweicloud_identity_group.this
+    huaweicloud_identity_group.this,
+    data.huaweicloud_identity_role.managed
   ]
 }
 

@@ -1,4 +1,28 @@
 ################################################################################
+# Managed Roles
+################################################################################
+
+output "managed_role_ids" {
+  description = "Map of managed role IDs, keyed by display name"
+  value = {
+    for name, role in data.huaweicloud_identity_role.managed : name => role.id
+  }
+}
+
+output "managed_roles" {
+  description = "Map of managed role details, keyed by display name"
+  value = {
+    for name, role in data.huaweicloud_identity_role.managed : name => {
+      id           = role.id
+      name         = role.name
+      display_name = role.display_name
+      description  = role.description
+      type         = role.type
+    }
+  }
+}
+
+################################################################################
 # IAM Users
 ################################################################################
 

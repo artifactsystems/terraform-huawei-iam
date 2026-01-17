@@ -15,6 +15,7 @@ This module supports the following IAM features:
 - ✅ **User Access Types**: Support for programmatic, console, or both access types
 - ✅ **Login Protection**: Support for SMS, email, or MFA login protection
 - ✅ **External Identity**: Support for external identity providers (SSO)
+- ✅ **Managed Roles Lookup**: Automatic role ID lookup by display name (Terragrunt-friendly)
 
 ## Examples
 
@@ -26,7 +27,13 @@ This module supports the following IAM features:
 
 ```hcl
 module "iam" {
-  source = "github.com/artifactsystems/terraform-huawei-iam?ref=v1.0.0"
+  source = "github.com/artifactsystems/terraform-huawei-iam?ref=v1.1.0"
+
+  # Managed roles - automatic ID lookup by display name
+  managed_role_names = [
+    "RDS ReadOnlyAccess",
+    "OBS ReadOnlyAccess",
+  ]
 
   users = [
     {
@@ -52,6 +59,14 @@ module "iam" {
     }
   ]
 
+  # role_id supports both display names (auto-resolved) and actual role IDs
+  group_role_assignments = [
+    {
+      group_name = "developers"
+      role_id    = "RDS ReadOnlyAccess"  # Display name - auto-resolved to ID
+      project_id = "all"
+    }
+  ]
 }
 ```
 
@@ -190,6 +205,7 @@ module "iam" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| managed_role_names | List of Huawei Cloud managed role display names to look up | `list(string)` | `[]` | no |
 | users | List of IAM users to create | `list(object)` | `[]` | no |
 | groups | List of IAM groups to create | `list(object)` | `[]` | no |
 | group_memberships | List of group memberships to create | `list(object)` | `[]` | no |
@@ -259,6 +275,8 @@ module "iam" {
 
 | Name | Description |
 |------|-------------|
+| managed_role_ids | Map of managed role IDs, keyed by display name |
+| managed_roles | Map of managed role details, keyed by display name |
 | user_ids | Map of user IDs, keyed by user name |
 | users | Map of user details, keyed by user name |
 | user_names | List of user names |

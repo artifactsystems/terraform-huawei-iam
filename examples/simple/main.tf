@@ -8,19 +8,16 @@ locals {
 }
 
 ################################################################################
-# Data Sources - Get Role IDs
-################################################################################
-
-data "huaweicloud_identity_role" "rds_readonly" {
-  display_name = "RDS ReadOnlyAccess"
-}
-
-################################################################################
 # IAM Module
 ################################################################################
 
 module "iam" {
   source = "../../"
+
+  managed_role_names = [
+    "RDS ReadOnlyAccess",
+    "OBS ReadOnlyAccess",
+  ]
 
   users = [
     {
@@ -46,10 +43,11 @@ module "iam" {
     }
   ]
 
+  # role_id can be a display name (auto-resolved) or an actual role ID
   group_role_assignments = [
     {
       group_name = "${local.name}-developers"
-      role_id    = data.huaweicloud_identity_role.rds_readonly.id
+      role_id    = "RDS ReadOnlyAccess" # Using display name - auto-resolved to ID
       project_id = "all"
     }
   ]

@@ -17,3 +17,8 @@ output "group_role_assignments" {
   description = "Group role assignments"
   value       = module.iam.group_role_assignments
 }
+
+output "managed_role_ids" {
+  description = "Map of managed role IDs for reference"
+  value       = module.iam.managed_role_ids
+}

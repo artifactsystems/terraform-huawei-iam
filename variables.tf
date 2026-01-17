@@ -1,4 +1,20 @@
 ################################################################################
+# Managed Roles
+################################################################################
+
+variable "managed_role_names" {
+  description = <<-EOF
+    List of Huawei Cloud managed role display names to look up.
+    Use display names from the Huawei Cloud console (e.g., "RDS ReadOnlyAccess", "OBS Administrator").
+    The module will automatically fetch the role IDs, which can then be used in group_role_assignments
+    either by display name (auto-resolved) or by the output managed_role_ids.
+    See role.md for a complete list of available managed roles.
+  EOF
+  type        = list(string)
+  default     = []
+}
+
+################################################################################
 # IAM Users
 ################################################################################
 
