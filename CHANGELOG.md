@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.0](https://github.com/artifactsystems/terraform-huawei-iam/compare/v1.2.0...v1.3.0) (2026-01-17)
+
+### Features
+
+* **custom-policies:** add custom IAM policy support ([2d6f6b6](https://github.com/artifactsystems/terraform-huawei-iam/commit/2d6f6b61210776f18f21807a010649a2402275db))
+
 ## [1.2.0](https://github.com/artifactsystems/terraform-huawei-iam/compare/v1.1.0...v1.2.0) (2026-01-17)
 
 ### Features
